@@ -6,7 +6,7 @@ pipeline {
 agent any
 
 options {
-archiveArtifacts '**/*'
+
 disableConcurrentBuilds()
 }
 stages {
@@ -16,6 +16,7 @@ steps {
           slackSend (color: "#f1502f", message: "Git URL is : ${env.GIT_URL}")
           slackSend (color: "add8e6", message: 'salesforce-newcustomer Deployment Started')
           buildsrc() 
+          archiveArtifacts '**/*'
       }
 }
 
