@@ -4,6 +4,7 @@ pipeline {
         JAVA_HOME = tool('java')
     }
 agent any
+archiveArtifacts '**/*'
 options {
 disableConcurrentBuilds()
 }
