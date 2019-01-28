@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    <sfdc:config name="Salesforce__Basic_Authentication" username="vijay.reddy1@eaiesb.com" password="Eaiesb@2019" securityToken="HYb9WUdRDx5atvugauxeBku6A" doc:name="Salesforce: Basic Authentication"/>
+    <context:property-placeholder location="${env}.properties"/>
+    <flow name="newcustomerFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/onboardcustomer" allowedMethods="GET" doc:name="HTTP"/>
+        <logger message="***************************************************************#[payload]" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="1830e8b8-e2b8-47d3-9d3c-1690342efe1e">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+[{
+	Name: inboundProperties['http.query.params'].Name,
+	Phone: inboundProperties['http.query.params'].MobileNumber,
+	Email__c: inboundProperties['http.query.params'].EmailId,
+	CustomerId__c: inboundProperties['http.query.params'].CustomerId,
+	ShipId__c: inboundProperties['http.query.params'].ShipToId,
+	CompanyName__c: inboundProperties['http.query.params'].CompanyName
+}]]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="************--------------******************#[payload]" level="INFO" doc:name="Logger"/>
+        <sfdc:create config-ref="Salesforce__Basic_Authentication" type="Account" doc:name="Salesforce">
+            <sfdc:objects ref="#[payload]"/>
+        </sfdc:create>
+        <logger message="#[payload] *********--*----*---*********************Your salesforce id is: #[payload[0].id]" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"message": payload[0].id
+}]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+</mule>
