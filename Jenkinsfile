@@ -10,7 +10,6 @@ options {
 disableConcurrentBuilds()
 }
 stages {
-  
 stage("Build Mule Source Code") {
 steps {
           slackSend (color: "#f1502f", message: "Git URL is : ${env.GIT_URL}")
