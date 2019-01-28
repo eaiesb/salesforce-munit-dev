@@ -52,7 +52,7 @@ stage('Upload Files To Artifactory') {
            slackSend (color: "#FF0001",message: 'salesforce-newcustomer Deployment Failed')
         }
       success {
-          slackSend (color: "0000ff", message: 'salesforce-newcustomer Build sucess')
+         slackSend (color: "0000ff", message: 'salesforce-newcustomer Build sucess')
           slackSend (color: "#FFA500",message: 'salesforce-newcustomer Artifacts Uploaded Sucessfully')
           build job: 'salesforce-munit-qa'
           emailext attachLog: true, mimeType: 'text/html', body: '''The jenkins build details are as follows:<br> <br>
