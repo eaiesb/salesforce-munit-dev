@@ -47,7 +47,7 @@
 			  	<muleVersion>3.9.1</muleVersion> 
 			  	<username>${anypoint.username}</username> 
 			 	<password>${anypoint.password}</password> 
-			  	<applicationName>salesforce-newcustomer-munit-mule3</applicationName>
+			  	<applicationName>${application.name}</applicationName>
 			  	<environment>Sandbox</environment> 
 			 	<uri>https://anypoint.mulesoft.com</uri>
 			       	<workerType>Micro</workerType>
